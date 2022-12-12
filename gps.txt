@@ -1,0 +1,118 @@
+MainActivity.java
+package com.example.demobit;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.util.Log;
+import android.view.View;
+import android.widget.*;
+import android.os.Bundle;
+import android.location.*;
+
+public class MainActivity extends AppCompatActivity {
+
+    Button submit;
+    TextView lat, lng;
+    LocationManager lms;
+    LocationListener lis;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        submit = findViewById(R.id.button);
+        lat = findViewById(R.id.lat);
+        lng = findViewById(R.id.lng);
+        lms = (LocationManager) getSystemService(LOCATION_SERVICE);
+        lis = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                lat.setText("Latitude: " + Double.toString(location.getLatitude()));
+                lng.setText("Longitude: " + Double.toString(location.getLongitude()));
+                Log.d("LOCATION:", Double.toString(location.getLatitude()) + Double.toString(location.getLongitude()));
+            }
+        };
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                lms.requestLocationUpdates("gps", 100, 0, lis);
+            }
+        });
+
+    }
+}
+
+
+
+
+
+activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#BEDCF4"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/lat"
+        android:layout_width="357dp"
+        android:layout_height="37dp"
+        android:text="Latitude : "
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.387"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.304" />
+
+    <TextView
+        android:id="@+id/lng"
+        android:layout_width="348dp"
+        android:layout_height="43dp"
+        android:text="Longitude : "
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.387"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.446" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Location"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.445"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.569" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+manifest.xml
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
